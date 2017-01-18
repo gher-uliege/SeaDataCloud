@@ -1,15 +1,42 @@
 #!/bin/bash
-
+#
 #################################################
 # Sylvain Watelet -23/11/2016 ###################
 # swatelet@ulg.ac.be ############################
 #################################################
+# Creates input files and runs a DIVA4D analysis using a single script
+# 
+# The input files are either specified (e.g., the ODV4 spreadsheet file containing the data)
+# or created by 'echo ... > ...' commands. 
+# All the parameters for the analysis can be modified by editing the 
+# arguments of the 'echo' commands.
 
-path4D="JRA4/Climatology"
-inputpath={path4D}"/input"
+PROGNAME=$(basename $0)
+
+DIVADIR="/home/ctroupin/Software/DIVA/diva-4.7.1/"
+DIVA4DDIR=${DIVADIR}"JRA4/Climatology/"
+INPUTDIR=${DIVA4DDIR}"input/"
+
+function error_exit
+{
+
+  #   ----------------------------------------------------------------
+  #   Function for exit due to fatal program error
+  #       Accepts 1 argument:
+  #           string containing descriptive error message
+  #   ----------------------------------------------------------------
+
+  echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+  exit 1
+}
+
+if [ ! -d "${DIVADIR}" ] ; then
+  error_exit "$LINENO: Directory ${DIVADIR} doesn't exist."
+fi
+
 
 echo './blacksea_data_CTD.txt
-' > $path4D/datasource
+' > ${DIVA4DDIR}/datasource
 
 echo '# advection flag
 0
@@ -19,7 +46,7 @@ echo '# advection flag
 00000000
 # variable month code
 0000
-' > $path4D/constandrefe
+' > ${DIVA4DDIR}/constandrefe
 
 echo 'Data extraction: 1 do it, 0 do nothing, -1 press coord, -10 pressure+Saunders
 1
@@ -51,25 +78,25 @@ gnuplot plots: 0 or 1
 0
 Data detrending: number of groups, 0 if no detrending.
 0
-' > $path4D/driver
+' > ${DIVA4DDIR}/driver
 
 echo '0101
-' > $path4D/monthlist
+' > ${DIVA4DDIR}/monthlist
 
 echo '0
 1
-' > $path4D/qflist
+' > ${DIVA4DDIR}/qflist
 
 echo 'Temperature
 Salinity
-' > $path4D/varlist
+' > ${DIVA4DDIR}/varlist
 
 echo '19002009
-' > $path4D/yearlist
+' > ${DIVA4DDIR}/yearlist
 
 echo '30
 0
-' > $inputpath/contour.depth
+' > ${INPUTDIR}/contour.depth
 
 echo " Title string for 3D NetCDF file:
 'Diva 3D analysis '
@@ -91,7 +118,7 @@ Autor e-mail adress (or contact person to report problems)
 'swatelet@ulg.ac.be'
 Acknowledgements
 'No acknowledgement'
-" > $inputpath/NCDFinfo
+" > ${INPUTDIR}/NCDFinfo
 
 echo '# Lc: correlation length (in units coherent with your data)#
 1.5
@@ -119,8 +146,10 @@ echo '# Lc: correlation length (in units coherent with your data)#
 0.5
 # varbak: variance of the background field. If zero, no error fields are produced. If one, relative errors are obtained#
 1.0
-' > $inputpath/param.par
+' > ${INPUTDIR}/param.par
 
-cd $path4D
+cd ${DIVA4DDIR}
+echo "I'm in directory ${DIVA4DDIR}"
+echo " "
 ./divadoall
 cd ../..
