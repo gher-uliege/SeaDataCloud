@@ -1,0 +1,126 @@
+#!/bin/bash
+
+#################################################
+# Sylvain Watelet -23/11/2016 ###################
+# swatelet@ulg.ac.be ############################
+#################################################
+
+path4D="JRA4/Climatology"
+inputpath={path4D}"/input"
+
+echo './blacksea_data_CTD.txt
+' > $path4D/datasource
+
+echo '# advection flag
+0
+# reference field flag
+0
+# vriable year code 
+00000000
+# variable month code
+0000
+' > $path4D/constandrefe
+
+echo 'Data extraction: 1 do it, 0 do nothing, -1 press coord, -10 pressure+Saunders
+1
+boundary lines and coastlines generation: 0 nothing, 1: contours, 2: UV, 3: 1+2
+1
+cleaning data on mesh: 1, 2: RL, 3: both, 4: 1 + outliers elimination, 5: =4+2
+0
+minimal number of data in a layer. If less, uses data from any month.
+0
+Parameters estimation and vertical filtering:
+-30
+Minimal L
+1.4
+Maximal L
+10.
+Minimal SN
+0.1
+Maximal SN
+5.0
+Analysis and reference field:
+1
+lowerlevel number
+1
+upperlevel number
+3
+4D netcdf files generation:
+11
+gnuplot plots: 0 or 1
+0
+Data detrending: number of groups, 0 if no detrending.
+0
+' > $path4D/driver
+
+echo '0101
+' > $path4D/monthlist
+
+echo '0
+1
+' > $path4D/qflist
+
+echo 'Temperature
+Salinity
+' > $path4D/varlist
+
+echo '19002009
+' > $path4D/yearlist
+
+echo '30
+0
+' > $inputpath/contour.depth
+
+echo " Title string for 3D NetCDF file:
+'Diva 3D analysis '
+ Reference time for data (ie: days since since 1900-01-01), if not climatological data
+'months since since xxxx-01-01'
+ Time value (that reprsents the data set), if not climatological data
+1200
+ Cell_methode string:
+'time: mean (this month data from all years)'
+ Institution name: where the dataset was produced.
+'University of Liege, GeoHydrodynamics and Environment Research'
+ Production group and e-mail
+'Diva group. E-mails : a.barth@ulg.ac.be ; swatelet@ulg.ac.be'
+ Source (observation, radiosonde, database, model-generated data,...)
+' data_from various sources for diva software testing work'
+Comment
+'No comment'
+Autor e-mail adress (or contact person to report problems)
+'swatelet@ulg.ac.be'
+Acknowledgements
+'No acknowledgement'
+" > $inputpath/NCDFinfo
+
+echo '# Lc: correlation length (in units coherent with your data)#
+1.5
+# icoordchange (=0 if no change of coordinates is to be performed; =1 if positions are in degrees and if you want to use real distances)#
+1
+# ispec: output files required#
+11
+# ireg: mode selected for background field: 0=null guess; 1=mean of data; 2=regression plan if at least 3 non-aligned data provided#
+1
+# xori: x-coordinate of the first grid point of the output#
+27
+# xori: y-coordinate of the first grid point of the output#
+40
+# dx: step of output grid#
+0.1
+# dy: step of output grid#
+0.1
+# nx: number of grid points in the x-direction#
+151
+# ny: number of grid points in the y-direction#
+76
+# valex: exclusion value#
+-99
+# snr: signal to noise ratio of the whole dataset#
+0.5
+# varbak: variance of the background field. If zero, no error fields are produced. If one, relative errors are obtained#
+1.0
+' > $inputpath/param.par
+
+cd $path4D
+./divadoall
+cd ../..
