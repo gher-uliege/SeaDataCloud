@@ -95,6 +95,7 @@ echo '19002009
 ' > ${DIVA4DDIR}/yearlist
 
 echo '30
+10
 0
 ' > ${INPUTDIR}/contour.depth
 
