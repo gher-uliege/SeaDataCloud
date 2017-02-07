@@ -1,5 +1,8 @@
 test*
+*pdf
+*odt
 *swp
 *copy
 .ipynb_checkpoints/
 DivaUserGuide/
+*idea
