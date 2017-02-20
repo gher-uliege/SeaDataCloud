@@ -1,5 +1,6 @@
 pywps-demo/
 test*
+*.docx
 *log
 *pdf
 *ods
