@@ -1,3 +1,6 @@
+# build as:
+# docker build -t jupyterhub/singleuser .
+
 FROM jupyter/singleuser
 
 MAINTAINER Alexander Barth <a.barth@ulg.ac.be>
@@ -9,6 +12,9 @@ USER root
 ADD install_julia.sh .
 RUN bash install_julia.sh
 
+
+# install packages as user (to that the user can temporarily update them if necessary)
+
 USER jovyan
 RUN julia --eval 'Pkg.init()'
 RUN julia --eval 'Pkg.add("IJulia"); using IJulia'
@@ -17,58 +23,32 @@ RUN julia --eval 'Pkg.add("IJulia"); using IJulia'
 #USER=jovyan
 #HOME=/home/$USER
 
+RUN julia --eval 'Pkg.add("IJulia"); using IJulia'
+
+# install and precompilation
+
+USER root
+RUN apt-get update
+RUN apt-get install -y libnetcdf-dev
+USER jovyan
 
 
-# cat > mylist <<EOF
-# EOF
-# PkgDev
-# PyPlot
-# Gallium
-# Interpolations
-# Gadfly
-# CatViews
-# BlockArrays
-# StatPlots
-# ReverseDiffSource
-# VideoIO
-# Images
-# ImageMagick
-# Glob
-# LightXML
-# Requests
-# LibGEOS
-# BuildExecutable
-# MAT
-# GR
-# WoodburyMatrices
-# DataAssim
-# NetCDF
-# DistributedArrays
-# Coverage
-# NullableArrays
-# ProfileView
-# BenchmarkTools
-# JSON
-# JuMP
-# Clp
-# RDatasets
-# SpecialFunctions
-# EOF
+RUN i=NetCDF; julia --eval "Pkg.add(\"$i\"); using $i"
+RUN i=PyPlot; julia --eval "Pkg.add(\"$i\"); using $i"
+RUN i=Interpolations; julia --eval "Pkg.add(\"$i\"); using $i"
+RUN i=MAT; julia --eval "Pkg.add(\"$i\"); using $i"
+RUN i=JSON; julia --eval "Pkg.add(\"$i\"); using $i"
+RUN i=NullableArrays; julia --eval "Pkg.add(\"$i\"); using $i"
+RUN i=SpecialFunctions; julia --eval "Pkg.add(\"$i\"); using $i"
 
-# for i in $(cat mylist); do
-#     julia --eval "Pkg.add(\"$i\")"
-# done
 
-# # precompilation
-# for i in $(cat mylist); do
-#     if [ "$i" != "PkgDev" ]; then
-# 	julia --eval "using $i"
-#     fi
-# done
+
+RUN i=divand; julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); using $i"
+
 
 
 USER root
-# jupyter kernelspec list
+# install julia jupyter kernelspec list
 RUN mkdir /usr/local/share/jupyter/kernels/julia-0.5
 RUN cp -Rp /home/jovyan/.julia/v0.5/IJulia/deps/julia-0.5/kernel.json /usr/local/share/jupyter/kernels/
 
