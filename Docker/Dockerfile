@@ -11,24 +11,27 @@ USER root
 
 RUN apt-get update
 RUN apt-get install -y libnetcdf-dev
+RUN apt-get install -y ca-certificates
+RUN echo "davfs2 davfs2/suid_file boolean true" | debconf-set-selections --
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y davfs2
 
 # Install julia
 
 ADD install_julia.sh .
 RUN bash install_julia.sh
+RUN rm install_julia.sh
+
+
+RUN apt-get install -y libzmq3-dev
 
 # install packages as user (to that the user can temporarily update them if necessary)
 # and precompilation
-
-RUN apt-get install -y libzmq-dev
 
 USER jovyan
 
 RUN julia --eval 'Pkg.init()'
 
-USER root
-RUN apt-get remove -y libzmq-dev
-RUN apt-get install -y libzmq3-dev
+
 USER jovyan
 RUN i=ZMQ; julia --eval "Pkg.add(\"$i\"); using $i"
 
