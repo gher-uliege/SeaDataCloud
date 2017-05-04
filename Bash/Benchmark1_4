@@ -9,6 +9,9 @@ ntimes=10
 yearinit=2000
 yearend=2010
 
+logdir='./log/'
+mkdir -p ${logdir}
+
 
 # Function to run a given command several times
 run() {
@@ -23,12 +26,12 @@ run() {
 # 1st benchmark
 # -------------
 
-BMLOG=./benchmark1ULg.log
+BMLOG=${logdir}'/benchmark1ULg.log'
 echo "# Working on 1st benchmark" | tee ${BMLOG}
-echo "#Column meaning"
-echo "#1st: CPU-seconds that the process used directly (in user mode), in seconds." >> ${BMLOG}
-echo "#2nd: CPU-seconds used by the system on behalf of the process (in kernel mode), in seconds." >> ${BMLOG}
-echo "#3rd: Elapsed real (wall clock) time used by the process, in seconds." >> ${BMLOG}
+echo "# Column meaning" | tee -a ${BMLOG}
+echo "# 1st: CPU-seconds that the process used directly (in user mode), in seconds." | tee -a ${BMLOG}
+echo "# 2nd: CPU-seconds used by the system on behalf of the process (in kernel mode), in seconds." | tee -a ${BMLOG}
+echo "# 3rd: Elapsed real (wall clock) time used by the process, in seconds." | tee -a ${BMLOG}
 
  
 for years in $(seq $yearinit $yearend);
@@ -46,7 +49,10 @@ done
 
 echo "Check results in file ${BMLOG}"
 
-BMLOG=./benchmark2ULg.log
+# 2nd benchmark
+# -------------
+
+BMLOG=${logdir}'/benchmark2ULg.log'
 echo "# Working on 2nd benchmark" | tee ${BMLOG}
  
 for years in $(seq $yearinit $yearend);
@@ -64,8 +70,10 @@ done
 
 echo "Check results in file ${BMLOG}"
 
+# 3rd benchmark
+# -------------
 
-BMLOG=./benchmark3ULg.log
+BMLOG=${logdir}'/benchmark3ULg.log'
 echo "# Working on 3rd benchmark" | tee ${BMLOG}
  
 for years in $(seq $yearinit $yearend);
@@ -83,7 +91,10 @@ done
 
 echo "Check results in file ${BMLOG}"
 
-BMLOG=./benchmark4ULg.log
+# 4th benchmark
+# -------------
+
+BMLOG=${logdir}'/benchmark4ULg.log'
 echo "# Working on 4th benchmark" | tee ${BMLOG}
  
 for years in $(seq $yearinit $yearend);
