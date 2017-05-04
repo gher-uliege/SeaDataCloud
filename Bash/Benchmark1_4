@@ -1,0 +1,102 @@
+#!/bin/bash
+
+# User arguments
+# --------------
+
+# Number of times to run each benchmark
+ntimes=10
+# First and last years of the period
+yearinit=2000
+yearend=2010
+
+
+# Function to run a given command several times
+run() {
+    number=$1
+    shift
+    for i in $(seq 1 $number); do
+      echo "${i}/${number}"
+      $@
+    done
+}
+
+# 1st benchmark
+# -------------
+
+BMLOG=./benchmark1ULg.log
+echo "# Working on 1st benchmark" | tee ${BMLOG}
+echo "#Column meaning"
+echo "#1st: CPU-seconds that the process used directly (in user mode), in seconds." >> ${BMLOG}
+echo "#2nd: CPU-seconds used by the system on behalf of the process (in kernel mode), in seconds." >> ${BMLOG}
+echo "#3rd: Elapsed real (wall clock) time used by the process, in seconds." >> ${BMLOG}
+
+ 
+for years in $(seq $yearinit $yearend);
+do
+  echo "# Period: ${yearinit}-${years}" | tee -a ${BMLOG}
+  command="/usr/bin/time --format \"%U %S %e\" -o ${BMLOG} -a wget --quiet -O out1 \"http://ec.oceanbrowser.net/emodnet/Python/web/wpswms?LAYERS=EPC00007&STYLES=vmax%3A100000.0%2Bnorm%3Alog%2Bmethod%3Apcolor%2Bvmin%3A1&TRANSPARENT=true&FORMAT=image%2Fpng&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&ELEVATION=0%2F10&TIME=${yearinit}-01-01T00%3A00%3A00.000Z%2F${years}-01-01T00%3A00%3A00.000Z&SRS=EPSG%3A4326&BBOX=0,45,45,90&WIDTH=512&HEIGHT=512&benchmark=$(date +%s)\" "
+   
+  echo "# command to be run ${ntimes} times:" | tee -a ${BMLOG}
+  echo "# ${command}" | tee -a ${BMLOG}
+  echo "# " | tee -a ${BMLOG}  
+  # Repeat the command several times
+  run ${ntimes} eval ${command} 
+
+done
+
+echo "Check results in file ${BMLOG}"
+
+BMLOG=./benchmark2ULg.log
+echo "# Working on 2nd benchmark" | tee ${BMLOG}
+ 
+for years in $(seq $yearinit $yearend);
+do
+  echo "# Period: ${yearinit}-${years}" | tee -a ${BMLOG}
+  command="/usr/bin/time --format \"%U %S %e\" -o ${BMLOG} -a wget --quiet -O out2 \"http://emodnet02.cineca.it/wps?DataInputs=[mindatetime=${yearinit}-01-01T00:00:00.000Z;maxz=10;maxdatetime=${years}-01-01T00:00:00.000Z;bbox=0,45,45,90;width=512;markersize=0.5;minz=0;p35=EPC00007]&service=wps&request=Execute&Identifier=observed_cindex&version=1.0.0&benchmark=$(date +%s)\" "
+   
+  echo "# command to be run ${ntimes} times:" | tee -a ${BMLOG}
+  echo "# ${command}" | tee -a ${BMLOG}
+  echo "# " | tee -a ${BMLOG}  
+  # Repeat the command several times
+  run ${ntimes} eval ${command} 
+
+done
+
+echo "Check results in file ${BMLOG}"
+
+
+BMLOG=./benchmark3ULg.log
+echo "# Working on 3rd benchmark" | tee ${BMLOG}
+ 
+for years in $(seq $yearinit $yearend);
+do
+  echo "# Period: ${yearinit}-${years}" | tee -a ${BMLOG}
+  command="/usr/bin/time --format \"%U %S %e\" -o ${BMLOG} -a wget --quiet -O out2 \"http://ec.oceanbrowser.net/emodnet/proxy?url=http%3A%2F%2Femodnet02.cineca.it%2Fwps%3FDataInputs%3D%5Bz%3DADEPZZ01%3Bzlim0%3D0%3Bzlim1%3D10%3Bbbox%3D10.5470703097%2C10.9470703097%2C55.3078125949%2C55.7078125949%3Bstarttime%3D${yearinit}-01-01T00%3A00%3A00Z%3Bendtime%3D${years}-01-01T00%3A00%3A00Z%3Bparameter%3DEPC00105%3Blog10%3D0%3Bmarkersize%3D12.0%3Balpha%3D1%5D%26service%3Dwps%26request%3DExecute%26Identifier%3Dbbox_plot_timeseries%26version%3D1.0.0&benchmark=$(date +%s)\" "
+   
+  echo "# command to be run ${ntimes} times:" | tee -a ${BMLOG}
+  echo "# ${command}" | tee -a ${BMLOG}
+  echo "# " | tee -a ${BMLOG}  
+  # Repeat the command several times
+  run ${ntimes} eval ${command} 
+
+done
+
+echo "Check results in file ${BMLOG}"
+
+BMLOG=./benchmark4ULg.log
+echo "# Working on 4th benchmark" | tee ${BMLOG}
+ 
+for years in $(seq $yearinit $yearend);
+do
+  echo "# Period: ${yearinit}-${years}" | tee -a ${BMLOG}
+  command="/usr/bin/time --format \"%U %S %e\" -o ${BMLOG} -a wget --quiet -O out2 \"http://emodnet02.cineca.it/wps?DataInputs=[mindatetime=${yearinit}-01-01T00:00:00.000Z;maxz=10;maxdatetime=${years}-01-01T00:00:00.000Z;bbox=0,45,45,90;width=512;markersize=0.5;minz=0;p35=EPC00007]&service=wps&request=Execute&Identifier=observed_cindex&version=1.0.0&benchmark=$(date +%s)\" "
+   
+  echo "# command to be run ${ntimes} times:" | tee -a ${BMLOG}
+  echo "# ${command}" | tee -a ${BMLOG}
+  echo "# " | tee -a ${BMLOG}  
+  # Repeat the command several times
+  run ${ntimes} eval ${command} 
+
+done
+
+echo "Check results in file ${BMLOG}"
