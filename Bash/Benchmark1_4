@@ -79,7 +79,7 @@ echo "# Working on 3rd benchmark" | tee ${BMLOG}
 for years in $(seq $yearinit $yearend);
 do
   echo "# Period: ${yearinit}-${years}" | tee -a ${BMLOG}
-  command="/usr/bin/time --format \"%U %S %e\" -o ${BMLOG} -a wget --quiet -O out2 \"http://ec.oceanbrowser.net/emodnet/proxy?url=http%3A%2F%2Femodnet02.cineca.it%2Fwps%3FDataInputs%3D%5Bz%3DADEPZZ01%3Bzlim0%3D0%3Bzlim1%3D10%3Bbbox%3D10.5470703097%2C10.9470703097%2C55.3078125949%2C55.7078125949%3Bstarttime%3D${yearinit}-01-01T00%3A00%3A00Z%3Bendtime%3D${years}-01-01T00%3A00%3A00Z%3Bparameter%3DEPC00105%3Blog10%3D0%3Bmarkersize%3D12.0%3Balpha%3D1%5D%26service%3Dwps%26request%3DExecute%26Identifier%3Dbbox_plot_timeseries%26version%3D1.0.0&benchmark=$(date +%s)\" "
+  command="/usr/bin/time --format \"%U %S %e\" -o ${BMLOG} -a wget --quiet -O out3 \"http://ec.oceanbrowser.net/emodnet/proxy?url=http%3A%2F%2Femodnet02.cineca.it%2Fwps%3FDataInputs%3D%5Bz%3DADEPZZ01%3Bzlim0%3D0%3Bzlim1%3D10%3Bbbox%3D10.5470703097%2C10.9470703097%2C55.3078125949%2C55.7078125949%3Bstarttime%3D${yearinit}-01-01T00%3A00%3A00Z%3Bendtime%3D${years}-01-01T00%3A00%3A00Z%3Bparameter%3DEPC00105%3Blog10%3D0%3Bmarkersize%3D12.0%3Balpha%3D1%5D%26service%3Dwps%26request%3DExecute%26Identifier%3Dbbox_plot_timeseries%26version%3D1.0.0&benchmark=$(date +%s)\" "
    
   echo "# command to be run ${ntimes} times:" | tee -a ${BMLOG}
   echo "# ${command}" | tee -a ${BMLOG}
@@ -100,7 +100,7 @@ echo "# Working on 4th benchmark" | tee ${BMLOG}
 for years in $(seq $yearinit $yearend);
 do
   echo "# Period: ${yearinit}-${years}" | tee -a ${BMLOG}
-  command="/usr/bin/time --format \"%U %S %e\" -o ${BMLOG} -a wget --quiet -O out2 \"http://emodnet02.cineca.it/wps?DataInputs=[mindatetime=${yearinit}-01-01T00:00:00.000Z;maxz=10;maxdatetime=${years}-01-01T00:00:00.000Z;bbox=0,45,45,90;width=512;markersize=0.5;minz=0;p35=EPC00007]&service=wps&request=Execute&Identifier=observed_cindex&version=1.0.0&benchmark=$(date +%s)\" "
+  command="/usr/bin/time --format \"%U %S %e\" -o ${BMLOG} -a wget --quiet -O out4 \"http://emodnet02.cineca.it/wps?DataInputs=[mindatetime=${yearinit}-01-01T00:00:00.000Z;maxz=10;maxdatetime=${years}-01-01T00:00:00.000Z;bbox=0,45,45,90;width=512;markersize=0.5;minz=0;p35=EPC00007]&service=wps&request=Execute&Identifier=observed_cindex&version=1.0.0&benchmark=$(date +%s)\" "
    
   echo "# command to be run ${ntimes} times:" | tee -a ${BMLOG}
   echo "# ${command}" | tee -a ${BMLOG}
