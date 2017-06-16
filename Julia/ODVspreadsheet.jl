@@ -2,19 +2,48 @@ module ODVspreadsheet
 
 using Logging
 
-# Configure logging (replace WARNING by DEBUG, INFO, ERROR or CRITICAL)
-Logging.configure(level=WARNING);
+# Set logging level(DEBUG, INFO, WARNING, ERROR or CRITICAL)
+loglevel = WARNING
+Logging.configure(level=loglevel);
 
+"""
+Define composite type that will contain:
+* the metadata (dictionary),
+* the column labels (array) and
+* the profiles (array of arrays).
+"""
+
+global Spreadsheet
+type Spreadsheet
+        metadata::Dict{String,String}
+        columnLabels::Array{SubString{String},1}
+        profileList::Array{Any,1}
+end
 
 function initProfileList(line)
     """
     Create an empty list of lists,
     the number of internal lists is the number of columns
+    found in the ODV spreadsheet.
+
+    Input:
+
+    * `line`: Array{SubString{String},1} as obtained by applying `split`
+            to a text line read from an ODV spreadsheet.
+
+    Output:
+
+    * `profile`: an Array of Arrays (one per column of ODV spreadsheet).
 
     List of lists is preferred because the length of each list is
-    not always the same.
+    not always the same:
+    * the columns storing ocean variables (e.g., temperature, depth) will
+    contain several values for a given profile;
+    * the columns storing information about the profile (e.g., coordinates,
+    station) only have one value.
     """
-    debug("Creating new profile (list of list) with empty values")
+
+    debug("Creating new profile (list of lists)")
 
     # Compute number of columns
     ncolumns = length(line);
@@ -34,25 +63,23 @@ function getNonEmptyInd(line)
     return nonempty_ind;
 end
 
-"""
-Define composite type
-that will contain: the metadata, the column labels and an array of profiles
-"""
-
-global ODVspreadsheet3
-type ODVspreadsheet3
-        metadata::Dict{String,String}
-        columnLabels::Array{SubString{String},1}
-        profileList::Array{Any,1}
-end
 
 function readODVspreadsheet(datafile)
-
     """
     The function will return a composite type that will store:
     1. The general metadata of the spreadsheet
     2. The labels of the columns
     3. The individual profiles
+
+    Input
+
+    *`datafile`: the path to an ODV spreadsheet file.
+               The Path can be relative or absolute.
+
+    Output
+
+    *`ODVdata`: a "Spreadsheet" composite type.
+
     """
 
     # metadata will be stored in a dictionary
@@ -91,12 +118,19 @@ function readODVspreadsheet(datafile)
         profileList = []
 
         # Loop on the lines
-        jj = 0
+        nlines = 0
         profile = [];
         nprofiles = 0;
 
+        # Read the first data line to initiate the loop
+        line = split(chomp(readline(f)), "\t");
+        nprofiles += 1;
+        debug("Working with a header line")
+        debug("Create a new, empty profile")
+        profile = initProfileList(line)
+
         while !eof(f)
-            jj += 1;
+            nlines += 1;
             line = split(chomp(readline(f)), "\t");
 
             # Count empty values
@@ -121,14 +155,18 @@ function readODVspreadsheet(datafile)
                     push!(profile[ii], line[ii]);
                 end
             end
+
         end
 
+        # Add the last profile to the list
+        push!(profileList, profile);
+
         info("No. of profiles in the file: " * string(nprofiles))
-        ODVdata = ODVspreadsheet3(metadata, columnLabels, profileList)
+        ODVdata = Spreadsheet(metadata, columnLabels, profileList)
         return ODVdata
     end
 end
 
-export WTF, readODVspreadsheet
+export readODVspreadsheet
 
 end
