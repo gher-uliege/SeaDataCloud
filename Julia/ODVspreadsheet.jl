@@ -1,6 +1,7 @@
 module ODVspreadsheet
 
 using Logging
+using StringEncodings
 
 # Set logging level(DEBUG, INFO, WARNING, ERROR or CRITICAL)
 loglevel = WARNING
@@ -15,9 +16,9 @@ Define composite type that will contain:
 
 global Spreadsheet
 type Spreadsheet
-        metadata::Dict{String,String}
-        columnLabels::Array{SubString{String},1}
-        profileList::Array{Any,1}
+    metadata::Dict{String,String}
+    columnLabels::Array{SubString{String},1}
+    profileList::Array{Any,1}
 end
 
 function initProfileList(line)
@@ -87,7 +88,7 @@ function readODVspreadsheet(datafile)
     metadata = Dict{String, String}()
 
     # Context manager
-    open(datafile, "r") do f
+    open(datafile, enc"Latin1", "r") do f
         line = readline(f)
 
         # Read the metadata (lines starting with //)
