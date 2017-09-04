@@ -11,6 +11,9 @@ USER root
 
 RUN apt-get update
 RUN apt-get install -y libnetcdf-dev
+#RUN apt-get install -y ca-certificates
+#RUN echo "davfs2 davfs2/suid_file boolean true" | debconf-set-selections --
+#RUN DEBIAN_FRONTEND=noninteractive apt-get install -y davfs2
 RUN apt-get install -y libzmq3-dev
 
 RUN conda install ipywidgets
@@ -23,7 +26,6 @@ RUN rm install_julia.sh
 
 # install packages as user (to that the user can temporarily update them if necessary)
 # and precompilation
-
 
 USER jovyan
 
