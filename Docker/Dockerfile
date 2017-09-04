@@ -41,7 +41,8 @@ RUN i=SpecialFunctions; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=Interact; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=Roots; julia --eval "Pkg.add(\"$i\"); using $i"
 
-RUN i=divand; julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); using $i"
+RUN i=OceanPlot; julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); using $i"
+RUN i=divand; julia   --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); using $i"
 
 
 USER root
