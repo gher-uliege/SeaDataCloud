@@ -28,6 +28,7 @@ RUN rm install_julia.sh
 # and precompilation
 
 USER jovyan
+ENV JUPYTER /opt/conda/bin/jupyter
 
 RUN julia --eval 'Pkg.init()'
 
@@ -43,14 +44,17 @@ RUN i=SpecialFunctions; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=Interact; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=Roots; julia --eval "Pkg.add(\"$i\"); using $i"
 
-RUN i=OceanPlot; julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); using $i"
-RUN i=divand; julia   --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); using $i"
+RUN i=OceanPlot;  julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); Pkg.build(\"$i\"); using $i"
+RUN i=divand;     julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); Pkg.build(\"$i\"); using $i"
+
+RUN i=NCDatasets; julia --eval "Pkg.clone(\"https://github.com/Alexander-Barth/$i.jl\"); Pkg.build(\"$i\"); using $i"
 
 
 USER root
 # install julia jupyter kernelspec list
-RUN mkdir /usr/local/share/jupyter/kernels/julia-0.5
-RUN cp -Rp /home/jovyan/.julia/v0.5/IJulia/deps/julia-0.5/kernel.json /usr/local/share/jupyter/kernels/
+RUN mkdir /usr/local/share/jupyter/kernels/julia-0.6
+#RUN cp -Rp /home/jovyan/.julia/v0.6/IJulia/deps/julia-0.6/kernel.json /usr/local/share/jupyter/kernels/
+RUN cp /home/jovyan/.local/share/jupyter/kernels/julia-0.6/kernel.json /usr/local/share/jupyter/kernels/
 
 USER jovyan
 
