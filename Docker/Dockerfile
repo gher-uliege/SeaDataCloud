@@ -49,12 +49,17 @@ RUN i=divand;     julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\")
 
 RUN i=NCDatasets; julia --eval "Pkg.clone(\"https://github.com/Alexander-Barth/$i.jl\"); Pkg.build(\"$i\"); using $i"
 
+RUN i=Requests; julia --eval "Pkg.add(\"$i\"); using $i"
 
-USER root
+
+#USER root
 # install julia jupyter kernelspec list
-RUN mkdir /usr/local/share/jupyter/kernels/julia-0.6
-#RUN cp -Rp /home/jovyan/.julia/v0.6/IJulia/deps/julia-0.6/kernel.json /usr/local/share/jupyter/kernels/
-RUN cp /home/jovyan/.local/share/jupyter/kernels/julia-0.6/kernel.json /usr/local/share/jupyter/kernels/
+#RUN mkdir /usr/local/share/jupyter/kernels/julia-0.6
+#RUN cp -Rp /home/jovyan/.local/share/jupyter/kernels/julia-0.6 /usr/local/share/jupyter/kernels/
+
+# no depreciation warnings
+#RUN sed -i 's/"-i",/"-i", "--depwarn=no",/' /usr/local/share/jupyter/kernels/julia-0.6/kernel.json
+RUN sed -i 's/"-i",/"-i", "--depwarn=no",/' /home/jovyan/.local/share/jupyter/kernels/julia-0.6/kernel.json
 
 USER jovyan
 
