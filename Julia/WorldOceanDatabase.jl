@@ -4,7 +4,6 @@ using NCDatasets
 import Requests
 using AbstractTrees
 import Gumbo
-import Glob
 import DataArrays
 
 """
@@ -31,7 +30,7 @@ function extract(tarnames,basedir)
     for i = 1:length(tarnames)
         probe = split(tarnames[i],".")[3]
         dirnames[i] = joinpath(basedir,probe)
-        @show dirnames[i]
+        #@show dirnames[i]
         mkpath(dirnames[i])
         extracttar(tarnames[i], dirnames[i])
     end
@@ -103,6 +102,7 @@ function download(lonrange,latrange,timerange,varname,email,basedir)
     #file_name = "ocldb1504104170.6387"
     #probe_name = "OSD,CTD,XBT,MBT,PFL,DRB,MRB,APB,UOR,SUR,GLD"
     
+    println("define bounding box and time range")
     r = Requests.post(URL; data = Dict("north" => north, "west" => west, "east" => east, "south" =>  south,
                               "yearstart" => Dates.year(datestart), "monthstart" => Dates.month(datestart), "daystart" => Dates.day(datestart),
                               "yearend" => Dates.year(dateend), "monthend" => Dates.month(dateend), "dayend" => Dates.day(dateend),
@@ -127,7 +127,7 @@ function download(lonrange,latrange,timerange,varname,email,basedir)
                     
                     if a["name"]  in ["file_name","probe_name","query_results"]
                         data[a["name"]] = a["value"]
-                        @show a["name"],a["value"]
+                        #@show a["name"],a["value"]
                     end
                     
                 end
@@ -155,10 +155,8 @@ function download(lonrange,latrange,timerange,varname,email,basedir)
     savereq(r,"out3.html")
 
 
-    ## choose format and correction
-    # here 15: Chen 2014
 
-
+    println("requesting data extraction")
     r = Requests.post(URLextract; data = Dict("format" => "net", "probe_storage" => "none", "csv_choice" => "csv", "level" => "observed", "xbt_corr" => xbt_correction, "email" => email, "what" => "EXTRACT DATA", "file_name" => file_name, "probe_name" => probe_name))
     savereq(r,"out4.html")
 
@@ -166,7 +164,7 @@ function download(lonrange,latrange,timerange,varname,email,basedir)
 
     # number of files available
     probes = split(probe_name,',')
-    @show probes
+    #@show probes
     probes_available = String[]
 
     waittime = 0 # time to wait in cycles
