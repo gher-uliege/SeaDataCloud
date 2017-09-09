@@ -10,6 +10,15 @@
 # For the example data see instructions at
 # https://github.com/gher-ulg/divand.jl/#example-data
 
+# Required modules
+# AbstractTrees
+# Gumbo
+# Requests
+# DataArrays
+# Glob
+# PyPlot
+# +all dependencies of divand
+
 using PyPlot
 import WorldOceanDatabase
 import divand
