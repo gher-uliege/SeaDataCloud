@@ -21,6 +21,19 @@ where:
 - *grid.nc* is another file containing the new grid
 - *data_regridded.nc* is the final output file with the fields interpolated onto the new grid.
 
+The grid file looks like:
+```
+dimensions:
+	longitude = 851 ;
+	latitude = 321 ;
+variables:
+	float longitude(longitude) ;
+		longitude:units = "degrees east" ;
+	float latitude(latitude) ;
+		latitude:units = "degrees north" ;
+}
+```
+
 Note that the input file needs to have lon and lat as coordinates. If that's not te case, one can always use [`ncrename`](https://linux.die.net/man/1/ncrename), for instance:
 ```bash
 ncrename -d x,lon -v x,lon in.nc
@@ -32,5 +45,9 @@ ncrename -d x,lon -v x,lon in.nc
 
 #### NetCDF 
 
-If you get errors related to netCDF, define the environment variables as in:
+If you get errors related to netCDF, define the environment variables as in:     
 http://www.earthsystemmodeling.org/esmf_releases/last_built/ESMF_usrdoc/node9.html#SECTION00093200000000000000
+
+#### Grid file
+
+It seems that the dimensions should be named *longitude* and *latitude*, otherwise the result is strange.
