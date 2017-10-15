@@ -1,2 +1,22 @@
 # SeaDataCloud
 Tools and interfaces to work with DIVA interpolation software tool. 
+
+## Re-gridding
+
+Re-gridding is the action of interpolation a field from a grid to another grid, usually with a higher resolution.
+
+[nco](http://nco.sourceforge.net) provides a tool [`ncremap`](http://nco.sourceforge.net/nco.html#ncremap) for this purpose. 
+
+### Installation
+
+1. Download and compile [ESMF](https://www.earthsystemcog.org/projects/esmf/download/)
+2. Download a recent version of nco.
+
+### Usage
+
+Note that the input file needs to have lon and lat as coordinates. If that's not te case, one can always use [`ncrename`](https://linux.die.net/man/1/ncrename), for instance:
+```bash
+ncrename -d x,lon -v x,lon in.nc
+```
+* the dimension *x* is renamed *lon*
+* the variable *x* is renamed *lon*
