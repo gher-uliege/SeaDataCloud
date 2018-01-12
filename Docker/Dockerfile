@@ -1,7 +1,7 @@
 # build as:
-# sudo docker build -t jupyterhub/singleuser .
+# sudo docker build -t abarth/diva-julia .
 
-FROM jupyter/singleuser
+FROM jupyterhub/singleuser:0.8
 
 MAINTAINER Alexander Barth <a.barth@ulg.ac.be>
 
@@ -11,12 +11,22 @@ USER root
 
 RUN apt-get update
 RUN apt-get install -y libnetcdf-dev
+RUN apt-get install -y unzip
+
 #RUN apt-get install -y ca-certificates
 #RUN echo "davfs2 davfs2/suid_file boolean true" | debconf-set-selections --
 #RUN DEBIAN_FRONTEND=noninteractive apt-get install -y davfs2
 RUN apt-get install -y libzmq3-dev
 
+ENV JUPYTER /opt/conda/bin/jupyter
+ENV PYTHON /opt/conda/bin/python
+ENV LD_LIBRARY_PATH /opt/conda/lib/
+
 RUN conda install ipywidgets
+RUN conda install -y matplotlib
+
+RUN apt-get install -y emacs
+RUN wget -O /usr/share/emacs/site-lisp/julia-mode.el https://raw.githubusercontent.com/JuliaEditorSupport/julia-emacs/master/julia-mode.el
 
 # Install julia
 
@@ -28,7 +38,6 @@ RUN rm install_julia.sh
 # and precompilation
 
 USER jovyan
-ENV JUPYTER /opt/conda/bin/jupyter
 
 RUN julia --eval 'Pkg.init()'
 
@@ -47,13 +56,10 @@ RUN i=Requests; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=Gumbo; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=AbstractTrees; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=Glob; julia --eval "Pkg.add(\"$i\"); using $i"
+RUN i=NCDatasets; julia --eval "Pkg.add(\"$i\"); using $i"
 
 RUN i=OceanPlot;  julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); Pkg.build(\"$i\"); using $i"
 RUN i=divand;     julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); Pkg.build(\"$i\"); using $i"
-
-#RUN i=NCDatasets; julia --eval "Pkg.clone(\"https://github.com/Alexander-Barth/$i.jl\"); Pkg.build(\"$i\"); using $i"
-
-RUN i=Requests; julia --eval "Pkg.add(\"$i\"); using $i"
 
 
 #USER root
@@ -68,5 +74,6 @@ RUN sed -i 's/"-i",/"-i", "--depwarn=no",/' /home/jovyan/.local/share/jupyter/ke
 USER jovyan
 
 # smoke test that it's importable at least
-RUN sh /srv/singleuser/singleuser.sh -h
-CMD ["sh", "/srv/singleuser/singleuser.sh"]
+#RUN sh /srv/singleuser/singleuser.sh -h
+#CMD ["sh", "/srv/singleuser/singleuser.sh"]
+CMD ["bash", "/usr/local/bin/start-singleuser.sh"]
