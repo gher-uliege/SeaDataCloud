@@ -56,6 +56,13 @@ RUN i=Requests; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=Gumbo; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=AbstractTrees; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=Glob; julia --eval "Pkg.add(\"$i\"); using $i"
+
+
+USER root
+RUN apt-get update
+RUN apt-get install -y ca-certificates curl libnlopt0 make gcc 
+USER jovyan
+
 RUN i=NCDatasets; julia --eval "Pkg.add(\"$i\"); using $i"
 
 RUN i=OceanPlot;  julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); Pkg.build(\"$i\"); using $i"
@@ -70,6 +77,10 @@ RUN i=divand;     julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\")
 # no depreciation warnings
 #RUN sed -i 's/"-i",/"-i", "--depwarn=no",/' /usr/local/share/jupyter/kernels/julia-0.6/kernel.json
 RUN sed -i 's/"-i",/"-i", "--depwarn=no",/' /home/jovyan/.local/share/jupyter/kernels/julia-0.6/kernel.json
+
+# avoid warnings
+# /bin/bash: /opt/conda/lib/libtinfo.so.5: no version information available (required by /bin/bash)
+RUN mv /opt/conda/lib/libtinfo.so.5 /opt/conda/lib/libtinfo.so.5-conda
 
 USER jovyan
 
