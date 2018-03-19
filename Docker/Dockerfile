@@ -74,6 +74,9 @@ RUN sed -i 's/"-i",/"-i", "--depwarn=no",/' /home/jovyan/.local/share/jupyter/ke
 # /bin/bash: /opt/conda/lib/libtinfo.so.5: no version information available (required by /bin/bash)
 RUN mv /opt/conda/lib/libtinfo.so.5 /opt/conda/lib/libtinfo.so.5-conda
 
+# remove unused kernel
+RUN rm -R /opt/conda/share/jupyter/kernels/python3
+
 USER jovyan
 
-CMD ["bash", "/usr/local/bin/start-singleuser.sh"]
+CMD ["bash", "/usr/local/bin/start-singleuser.sh","--KernelSpecManager.ensure_native_kernel=False"]
