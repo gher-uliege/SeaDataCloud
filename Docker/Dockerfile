@@ -10,22 +10,21 @@ EXPOSE 8888
 USER root
 
 RUN apt-get update
-RUN apt-get install -y libnetcdf-dev
+RUN apt-get install -y libnetcdf-dev netcdf-bin
 RUN apt-get install -y unzip
-
-#RUN apt-get install -y ca-certificates
+RUN apt-get install -y ca-certificates curl libnlopt0 make gcc 
 #RUN echo "davfs2 davfs2/suid_file boolean true" | debconf-set-selections --
 #RUN DEBIAN_FRONTEND=noninteractive apt-get install -y davfs2
 RUN apt-get install -y libzmq3-dev
+RUN apt-get install -y emacs
 
 ENV JUPYTER /opt/conda/bin/jupyter
 ENV PYTHON /opt/conda/bin/python
 ENV LD_LIBRARY_PATH /opt/conda/lib/
 
-RUN conda install ipywidgets
+RUN conda install -y ipywidgets
 RUN conda install -y matplotlib
 
-RUN apt-get install -y emacs
 RUN wget -O /usr/share/emacs/site-lisp/julia-mode.el https://raw.githubusercontent.com/JuliaEditorSupport/julia-emacs/master/julia-mode.el
 
 # Install julia
@@ -56,13 +55,6 @@ RUN i=Requests; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=Gumbo; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=AbstractTrees; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=Glob; julia --eval "Pkg.add(\"$i\"); using $i"
-
-
-USER root
-RUN apt-get update
-RUN apt-get install -y ca-certificates curl libnlopt0 make gcc 
-USER jovyan
-
 RUN i=NCDatasets; julia --eval "Pkg.add(\"$i\"); using $i"
 
 RUN i=OceanPlot;  julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); Pkg.build(\"$i\"); using $i"
@@ -84,7 +76,4 @@ RUN mv /opt/conda/lib/libtinfo.so.5 /opt/conda/lib/libtinfo.so.5-conda
 
 USER jovyan
 
-# smoke test that it's importable at least
-#RUN sh /srv/singleuser/singleuser.sh -h
-#CMD ["sh", "/srv/singleuser/singleuser.sh"]
 CMD ["bash", "/usr/local/bin/start-singleuser.sh"]
