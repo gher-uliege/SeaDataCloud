@@ -57,8 +57,10 @@ RUN i=AbstractTrees; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=Glob; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=NCDatasets; julia --eval "Pkg.add(\"$i\"); using $i"
 
+RUN i=PhysOcean; julia --eval "Pkg.add(\"$i\"); using $i"
+
 RUN i=OceanPlot;  julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); Pkg.build(\"$i\"); using $i"
-RUN i=divand;     julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); Pkg.build(\"$i\"); using $i"
+RUN i=divand;      julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); Pkg.build(\"$i\"); using $i"
 
 
 #USER root
@@ -77,6 +79,17 @@ RUN mv /opt/conda/lib/libtinfo.so.5 /opt/conda/lib/libtinfo.so.5-conda
 # remove unused kernel
 RUN rm -R /opt/conda/share/jupyter/kernels/python3
 
+ADD run.sh /usr/local/bin/run.sh
+
+USER root
+# Download notebooks
+RUN mkdir /data
+RUN cd /data;  \
+    wget -O master.zip https://github.com/gher-ulg/Diva-Workshops/archive/master.zip; unzip master.zip; \
+    rm /data/master.zip
+
 USER jovyan
 
-CMD ["bash", "/usr/local/bin/start-singleuser.sh","--KernelSpecManager.ensure_native_kernel=False"]
+#CMD ["bash", "/usr/local/bin/start-singleuser.sh","--KernelSpecManager.ensure_native_kernel=False"]
+
+CMD ["bash", "/usr/local/bin/run.sh"]
