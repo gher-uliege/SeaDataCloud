@@ -55,12 +55,18 @@ RUN i=Requests; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=Gumbo; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=AbstractTrees; julia --eval "Pkg.add(\"$i\"); using $i"
 RUN i=Glob; julia --eval "Pkg.add(\"$i\"); using $i"
-RUN i=NCDatasets; julia --eval "Pkg.add(\"$i\"); using $i"
+
+RUN julia --eval 'Pkg.update()'
+
+RUN i=NCDatasets;   julia --eval "Pkg.add(\"$i\"); using $i"
 
 RUN i=PhysOcean; julia --eval "Pkg.add(\"$i\"); using $i"
 
 RUN i=OceanPlot;  julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); Pkg.build(\"$i\"); using $i"
-RUN i=divand;      julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); Pkg.build(\"$i\"); using $i"
+RUN i=DIVAnd;      julia --eval "Pkg.clone(\"https://github.com/gher-ulg/$i.jl\"); Pkg.build(\"$i\"); using $i"
+
+RUN i=Knet; julia --eval "Pkg.add(\"$i\"); using $i"
+RUN i=CSV; julia --eval "Pkg.add(\"$i\"); using $i"
 
 
 #USER root
@@ -88,7 +94,14 @@ RUN cd /data;  \
     wget -O master.zip https://github.com/gher-ulg/Diva-Workshops/archive/master.zip; unzip master.zip; \
     rm /data/master.zip
 
+RUN apt-get install -y git g++
+
 USER jovyan
+
+RUN i=PhysOcean; julia --eval "Pkg.checkout(\"$i\"); using $i"
+RUN i=JLD; julia --eval "Pkg.add(\"$i\"); using $i"
+
+ADD emacs /home/jovyan/.emacs
 
 #CMD ["bash", "/usr/local/bin/start-singleuser.sh","--KernelSpecManager.ensure_native_kernel=False"]
 
