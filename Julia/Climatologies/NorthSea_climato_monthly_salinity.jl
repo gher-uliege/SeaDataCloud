@@ -27,6 +27,9 @@ TS = DIVAnd.TimeSelectorYearListMonthList(yearlist,monthlist);
 
 datadir = "/data/SeaDataCloud/NorthSea/"
 obsfile = joinpath(datadir, "NorthSea_obs_$(varname)_sdn_wod_merged.nc")
+filename = "./NorthSea/output/Water_body_$(replace(varname," "=>"_"))_NorthSea.4Danl_monthly_merged.nc"
+# File name based on the variable (but all spaces are replaced by underscores)
+xmlfilename = "Water_body_$(replace(varname," "=>"_")).4Danl_monthly.xml"
 
 if !isfile(obsfile)
     @error("No data file")
@@ -105,8 +108,6 @@ len = (lenx, leny, lenz);
 epsilon2 = 0.1;
 # epsilon2 = epsilon2 * rdiag;
 
-filename = "./NorthSea/output/Water_body_$(replace(varname," "=>"_"))_NorthSea.4Danl_monthly_merged.nc"
-
 ncglobalattrib,ncvarattrib = SDNMetadata(metadataS,filename,varname,lonr,latr)
 
 if isfile(filename)
@@ -134,7 +135,8 @@ end
     ncglobalattrib = ncglobalattrib,
     MEMTOFIT=100,
     solver=:direct,
-    surfextend = true
+    surfextend = true,
+    minfield = 0.0
     );
 
 obsidlist = copy(obsid);
@@ -155,9 +157,6 @@ if !isfile(cdilist)
 end
 
 ignore_errors = true
-
-# File name based on the variable (but all spaces are replaced by underscores)
-xmlfilename = "Water_body_$(replace(varname," "=>"_")).4Danl.xml"
 
 # generate a XML file for Sextant catalog
 divadoxml(filename,varname,project,cdilist,xmlfilename,

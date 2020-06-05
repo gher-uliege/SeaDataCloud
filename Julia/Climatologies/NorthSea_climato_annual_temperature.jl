@@ -15,7 +15,10 @@ include("northsea_plotting.jl")
 
 doplot = false
 varname = "Temperature"
-filename = "./NorthSea/output/Water_body_$(replace(varname," "=>"_"))_NorthSea.4Danl_annual_merged.nc"
+datadir = "/data/SeaDataCloud/NorthSea/"
+obsfile = joinpath(datadir, "NorthSea_obs_$(varname)_sdn_wod_merged.nc")
+filename = "./NorthSea/output/Water_body_$(replace(varname," "=>"_"))_NorthSea.4Danl_annual_merged_coeffderiv.nc"
+xmlfilename = "Water_body_$(replace(varname," "=>"_")).4Danl_merged_annual.xml"
 
 # Full period
 yearlist = [1955:2014];
@@ -25,9 +28,6 @@ monthlist = [[1,2,3,4,5,6,7,8,9,10,11,12]];
 
 TS = DIVAnd.TimeSelectorYearListMonthList(yearlist,monthlist);
 @show TS;
-
-datadir = "/data/SeaDataCloud/NorthSea/"
-obsfile = joinpath(datadir, "NorthSea_obs_$(varname)_sdn_wod_merged.nc")
 
 @info("Reading data from the observation file")
 @time obsval,obslon, obslat, obsdepth, obstime,obsid = DIVAnd.loadobs(Float64,obsfile,varname)
@@ -90,7 +90,7 @@ len = (lenx, leny, lenz);
 epsilon2 = 0.1;
 # epsilon2 = epsilon2 * rdiag;
 
-ncglobalattrib,ncvarattrib = SDNMetadata(metadataT,filename,varname,lonr,latr)
+    ncglobalattrib,ncvarattrib = SDNMetadata(metadataT,filename,varname,lonr,latr)
 
 if isfile(filename)
     rm(filename) # delete the previous analysis
@@ -112,12 +112,13 @@ end
     bathname=bathname,
     mask = mask,
     fitcorrlen = false,
-    niter_e = 2,
     ncvarattrib = ncvarattrib,
     ncglobalattrib = ncglobalattrib,
     MEMTOFIT=100,
     solver=:direct,
-    surfextend = true
+    surfextend = true,
+    coeff_derivative2 = [0.0, 0.0, 1e-9],
+    minfield = -1.0
     );
 
 obsidlist = copy(obsid);
@@ -138,9 +139,6 @@ if !isfile(cdilist)
 end
 
 ignore_errors = true
-
-# File name based on the variable (but all spaces are replaced by underscores)
-xmlfilename = "Water_body_$(replace(varname," "=>"_")).4Danl_merged.xml"
 
 # generate a XML file for Sextant catalog
 divadoxml(filename,varname,project,cdilist,xmlfilename,

@@ -17,17 +17,25 @@ include("northsea_domain.jl")
 include("northsea_plotting.jl")
 
 varname = "Temperature"
+
+# Full period
 yearlist = [1955:2014];
+# Decades
+yearlist = [1955:1964, 1965:1974, 1975:1984,
+            1985:1994, 1995:2004, 2005:2014];
 # Seasonal
 monthlist = [[1,2,3],[4,5,6],[7,8,9],[10,11,12]];
 
-filename = "./NorthSea/output/Water_body_$(replace(varname," "=>"_"))_NorthSea.4Danl_seasonal_merged.nc"
+datadir = "/data/SeaDataCloud/NorthSea/"
+obsfile = joinpath(datadir, "NorthSea_obs_$(varname)_sdn_wod_merged.nc")
+# File name based on the variable (but all spaces are replaced by underscores)
+xmlfilename = "Water_body_$(replace(varname," "=>"_")).4Danl.xml"
+filename = "./NorthSea/output/Water_body_$(replace(varname," "=>"_"))_NorthSea.4Danl_seasonal_decade_merged_coeffderiv.nc"
 
 TS = DIVAnd.TimeSelectorYearListMonthList(yearlist,monthlist);
 @show TS;
 
-datadir = "/data/SeaDataCloud/NorthSea/"
-obsfile = joinpath(datadir, "NorthSea_obs_$(varname)_sdn_wod_merged.nc")
+
 
 @info("Reading data from the observation file")
 @time obsval,obslon, obslat, obsdepth, obstime, obsid = DIVAnd.loadobs(Float64,obsfile,varname)
@@ -101,7 +109,9 @@ end
     ncglobalattrib = ncglobalattrib,
     MEMTOFIT=100,
     solver=:direct,
-    surfextend = true
+    surfextend = true,
+    minfield = -1.0,
+    coeff_derivative2 = [0.0, 0.0, 1e-9],
     );
 
 obsidlist = copy(obsid);
@@ -123,8 +133,7 @@ end
 
 ignore_errors = true
 
-# File name based on the variable (but all spaces are replaced by underscores)
-xmlfilename = "Water_body_$(replace(varname," "=>"_")).4Danl.xml"
+
 
 # generate a XML file for Sextant catalog
 divadoxml(filename,varname,project,cdilist,xmlfilename,
