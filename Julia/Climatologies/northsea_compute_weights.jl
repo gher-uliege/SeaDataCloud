@@ -7,8 +7,8 @@ using JLD
 
 datadir = "/data/SeaDataCloud/NorthSea/"
 varname = "Salinity"
-obsfile = joinpath(datadir, "NorthSea_obs.nc")
-netcdfODV = joinpath(datadir, "data_from_SDC_NS_DATA_DISCRETE_TS_V1b.nc")
+obsfile = joinpath(datadir, "NorthSea_obs_Salinity_sdn_wod_merged.nc")
+netcdfODV = joinpath(datadir, "data_from_SDC_NS_DATA_DISCRETE_TS_V1.nc")
 isfile(netcdfODV)
 @info("Reading data from the observation file")
 @time obsval,obslon, obslat, obsdepth, obstime,obsid = DIVAnd.loadobs(Float64,obsfile,varname)
