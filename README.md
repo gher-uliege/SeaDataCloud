@@ -8,7 +8,7 @@ Re-gridding is the action of interpolation a field from a grid to another grid, 
 
 ### Installation
 
-1. Download and compile [ESMF](https://www.earthsystemcog.org/projects/esmf/download/)
+1. Download and compile [ESMF](https://earthsystemmodeling.org/download/)
 2. Download a recent version of nco.
 
 ### Usage
